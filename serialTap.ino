@@ -7,17 +7,16 @@
 //
 void wdt_init(void) __attribute__((naked)) __attribute__((section(".init3")));
 
-void wdt_init(void)
-{
-   MCUSR = 0;
-   wdt_disable();
+void wdt_init(void) {
+  MCUSR = 0;
+  wdt_disable();
 
-   return;
+  return;
 }
 
-void configurePorts (const char arg[], const int i) {
-  char baudC[8]   = {'0'};
-  char config[4]  = {'0'};
+void configurePorts(const char arg[], const int i) {
+  char baudC[8] = { '0' };
+  char config[4] = { '0' };
   long baud = 0;
 
   //
@@ -27,63 +26,63 @@ void configurePorts (const char arg[], const int i) {
   // be valid so we assign default values instead.
   //
   if (i > 9) {
-    memcpy (baudC, arg + 3, i - 9);
-    baud = atol (baudC);
+    memcpy(baudC, arg + 3, i - 9);
+    baud = atol(baudC);
     //
     // the configuration always has a length of 3 and is located 4
     // chars before the newline character.
     //
-    memcpy (config, arg + i - 4, 3);
+    memcpy(config, arg + i - 4, 3);
   }
 
   uint8_t c;
-  if      (strcmp (config, "5N1") == 0)
+  if (strcmp(config, "5N1") == 0)
     c = SERIAL_5N1;
-  else if (strcmp (config, "5N2") == 0)
+  else if (strcmp(config, "5N2") == 0)
     c = SERIAL_5N2;
-  else if (strcmp (config, "5E1") == 0)
+  else if (strcmp(config, "5E1") == 0)
     c = SERIAL_5E1;
-  else if (strcmp (config, "5E2") == 0)
+  else if (strcmp(config, "5E2") == 0)
     c = SERIAL_5E2;
-  else if (strcmp (config, "5O1") == 0)
+  else if (strcmp(config, "5O1") == 0)
     c = SERIAL_5O1;
-  else if (strcmp (config, "5O2") == 0)
+  else if (strcmp(config, "5O2") == 0)
     c = SERIAL_5O2;
-  else if (strcmp (config, "6N1") == 0)
+  else if (strcmp(config, "6N1") == 0)
     c = SERIAL_6N1;
-  else if (strcmp (config, "6N2") == 0)
+  else if (strcmp(config, "6N2") == 0)
     c = SERIAL_6N2;
-  else if (strcmp (config, "6E1") == 0)
+  else if (strcmp(config, "6E1") == 0)
     c = SERIAL_6E1;
-  else if (strcmp (config, "6E2") == 0)
+  else if (strcmp(config, "6E2") == 0)
     c = SERIAL_6E2;
-  else if (strcmp (config, "6O1") == 0)
+  else if (strcmp(config, "6O1") == 0)
     c = SERIAL_6O1;
-  else if (strcmp (config, "6O2") == 0)
+  else if (strcmp(config, "6O2") == 0)
     c = SERIAL_6O2;
-  else if (strcmp (config, "7N1") == 0)
+  else if (strcmp(config, "7N1") == 0)
     c = SERIAL_7N1;
-  else if (strcmp (config, "7N2") == 0)
+  else if (strcmp(config, "7N2") == 0)
     c = SERIAL_7N2;
-  else if (strcmp (config, "7E1") == 0)
+  else if (strcmp(config, "7E1") == 0)
     c = SERIAL_7E1;
-  else if (strcmp (config, "7E2") == 0)
+  else if (strcmp(config, "7E2") == 0)
     c = SERIAL_7E2;
-  else if (strcmp (config, "7O1") == 0)
+  else if (strcmp(config, "7O1") == 0)
     c = SERIAL_7O1;
-  else if (strcmp (config, "7O2") == 0)
+  else if (strcmp(config, "7O2") == 0)
     c = SERIAL_7O2;
-  else if (strcmp (config, "8N1") == 0)
+  else if (strcmp(config, "8N1") == 0)
     c = SERIAL_8N1;
-  else if (strcmp (config, "8N2") == 0)
+  else if (strcmp(config, "8N2") == 0)
     c = SERIAL_8N2;
-  else if (strcmp (config, "8E1") == 0)
+  else if (strcmp(config, "8E1") == 0)
     c = SERIAL_8E1;
-  else if (strcmp (config, "8E2") == 0)
+  else if (strcmp(config, "8E2") == 0)
     c = SERIAL_8E2;
-  else if (strcmp (config, "8O1") == 0)
+  else if (strcmp(config, "8O1") == 0)
     c = SERIAL_8O1;
-  else if (strcmp (config, "8O2") == 0)
+  else if (strcmp(config, "8O2") == 0)
     c = SERIAL_8O2;
   else {
     //
@@ -99,68 +98,68 @@ void configurePorts (const char arg[], const int i) {
   if (baud < 1 || baud > 2000000)
     baud = 9600;
 
-  s[0]->print ("initialising serial ports with these settings: ");
-  s[0]->print (baud);
-  s[0]->print (" ");
-  s[0]->print (config);
-  s[0]->println ();
+  s[0]->print("initialising serial ports with these settings: ");
+  s[0]->print(baud);
+  s[0]->print(" ");
+  s[0]->print(config);
+  s[0]->println();
 
-  s[1]->begin (baud, c);
-  s[2]->begin (baud, c);
+  s[1]->begin(baud, c);
+  s[2]->begin(baud, c);
 }
 
-void help () {
-  s[0]->print ("\n\n--- ARDUINO MEGA SERIAL TAP HELP ---\n\n");
-  s[0]->print ("c (BAUDRATE, CONFIGURATION)   -   configure the RS-232 tap ports\n");
-  s[0]->print ("    BAUDRATE can be a number between 1 and 2,000,000\n");
-  s[0]->print ("    CONFIGURATION is a 3-character-combination of data bits, parity and stop bits\n");
-  s[0]->print ("        supported data bits: 5, 6, 7, 8\n");
-  s[0]->print ("        supported parities:  N (none), E (even parity), O (odd parity)\n");
-  s[0]->print ("        supported stop bits: 1, 2\n");
-  s[0]->print ("\n");
-  s[0]->print ("    examples:\n");
-  s[0]->print ("        c (115200, 8N1)\n");
-  s[0]->print ("        c (5579, 6E2)\n");
-  s[0]->print ("\n\n");
-  s[0]->print ("1 (STRING) / 2 (STRING)   -   inject data into serial communication between tapped devices\n");
-  s[0]->print ("    1 (): send data to serial device 1\n");
-  s[0]->print ("    2 (): send data to serial device 2\n");
-  s[0]->print ("\n");
-  s[0]->print ("    C escape sequences are supported (except for bytes and unicode)\n");
-  s[0]->print ("\n");
-  s[0]->print ("    examples:\n");
-  s[0]->print ("        1 (Hello, World!)\n");
-  s[0]->print ("        2 (printf (\"Hello, robot!\\n\"))\n");
-  s[0]->print ("\n\n");
-  s[0]->print ("m (MODE)   -   switch between inject and realtime mode\n");
-  s[0]->print ("    change the operating mode of the serial tap.\n");
-  s[0]->print ("    in inject mode, all serial data is relayed between the two serial\n");
-  s[0]->print ("    devices by the arduino. this allows you to inject data into the communication.\n");
-  s[0]->print ("\n");
-  s[0]->print ("    in realtime mode (the default), both participants have a direct electrical connection to each other.\n");
-  s[0]->print ("    this is useful for communication where timing is critical. injection is not possible\n");
-  s[0]->print ("    in this mode.\n");
-  s[0]->print ("\n");
-  s[0]->print ("    MODE can be either inject or realtime\n");
-  s[0]->print ("        if no mode or an invalid mode is supplied, it will simply print the current mode.\n");
-  s[0]->print ("\n\n");
-  s[0]->print ("h ()   -   display this help message\n");
-  s[0]->print ("\n\n");
-  s[0]->print ("debug ()   -   toggle debug mode\n");
-  s[0]->print ("    toggle echo of commands received\n");
-  s[0]->print ("\n\n");
-  s[0]->print ("reset ()   -   reset arduino\n");
-  s[0]->print ("    this can be useful when you don't have access to the physical reset button\n");
+void help() {
+  s[0]->print("\n\n--- ARDUINO MEGA SERIAL TAP HELP ---\n\n");
+  s[0]->print("c (BAUDRATE, CONFIGURATION)   -   configure the RS-232 tap ports\n");
+  s[0]->print("    BAUDRATE can be a number between 1 and 2,000,000\n");
+  s[0]->print("    CONFIGURATION is a 3-character-combination of data bits, parity and stop bits\n");
+  s[0]->print("        supported data bits: 5, 6, 7, 8\n");
+  s[0]->print("        supported parities:  N (none), E (even parity), O (odd parity)\n");
+  s[0]->print("        supported stop bits: 1, 2\n");
+  s[0]->print("\n");
+  s[0]->print("    examples:\n");
+  s[0]->print("        c (115200, 8N1)\n");
+  s[0]->print("        c (5579, 6E2)\n");
+  s[0]->print("\n\n");
+  s[0]->print("1 (STRING) / 2 (STRING)   -   inject data into serial communication between tapped devices\n");
+  s[0]->print("    1 (): send data to serial device 1\n");
+  s[0]->print("    2 (): send data to serial device 2\n");
+  s[0]->print("\n");
+  s[0]->print("    C escape sequences are supported (except for bytes and unicode)\n");
+  s[0]->print("\n");
+  s[0]->print("    examples:\n");
+  s[0]->print("        1 (Hello, World!)\n");
+  s[0]->print("        2 (printf (\"Hello, robot!\\n\"))\n");
+  s[0]->print("\n\n");
+  s[0]->print("m (MODE)   -   switch between inject and realtime mode\n");
+  s[0]->print("    change the operating mode of the serial tap.\n");
+  s[0]->print("    in inject mode, all serial data is relayed between the two serial\n");
+  s[0]->print("    devices by the arduino. this allows you to inject data into the communication.\n");
+  s[0]->print("\n");
+  s[0]->print("    in realtime mode (the default), both participants have a direct electrical connection to each other.\n");
+  s[0]->print("    this is useful for communication where timing is critical. injection is not possible\n");
+  s[0]->print("    in this mode.\n");
+  s[0]->print("\n");
+  s[0]->print("    MODE can be either inject or realtime\n");
+  s[0]->print("        if no mode or an invalid mode is supplied, it will simply print the current mode.\n");
+  s[0]->print("\n\n");
+  s[0]->print("h ()   -   display this help message\n");
+  s[0]->print("\n\n");
+  s[0]->print("debug ()   -   toggle debug mode\n");
+  s[0]->print("    toggle echo of commands received\n");
+  s[0]->print("\n\n");
+  s[0]->print("reset ()   -   reset arduino\n");
+  s[0]->print("    this can be useful when you don't have access to the physical reset button\n");
 }
 
-int setupTrap () {
+int setupTrap() {
   int i = 0;
-  char arg[20] = {'\0'};
+  char arg[20] = { '\0' };
   long time = 0;
 
   while (true) {
-    if (s[0]->available () > 0) {
-      time = millis ();
+    if (s[0]->available() > 0) {
+      time = millis();
       //
       // we read the input stream byte by byte and cast it to a character.
       // we expect the command to end with a newline character, if we don't
@@ -170,7 +169,7 @@ int setupTrap () {
       if (i == 20) {
         break;
       }
-      arg[i] = (char) (s[0]->read ());
+      arg[i] = (char)(s[0]->read());
       if (arg[i] == '\n') {
         break;
       }
@@ -180,91 +179,86 @@ int setupTrap () {
     // if there's no new data after 3 seconds, we assume the data
     // transmission is over.
     //
-    else if (time > 0 && millis () - time > 3000) {
+    else if (time > 0 && millis() - time > 3000) {
       break;
     }
   }
-  if (strstr (arg, "h ()") == &arg[0]) {
-    help ();
+  if (strstr(arg, "h ()") == &arg[0]) {
+    help();
     return 1;
-  }
-  else {
-    configurePorts (arg, i);
+  } else {
+    configurePorts(arg, i);
     return 0;
   }
   return 1;
 }
 
-void softReset () {
+void softReset() {
   wdt_enable(WDTO_15MS);
-  while (1);
+  while (1)
+    ;
 }
 
-void modeSwitch (const char arg[]) {
-  if (strstr (arg, "inject") == &arg[3]) {
+void modeSwitch(const char arg[]) {
+  if (strstr(arg, "inject") == &arg[3]) {
     if (injectMode) {
-      s[0]->print ("device is already in inject mode\n");
-    }
-    else {
-      digitalWrite (2, HIGH);
+      s[0]->print("device is already in inject mode\n");
+    } else {
+      digitalWrite(2, HIGH);
       injectMode = true;
-      s[0]->print ("device is now in inject mode\n");
+      s[0]->print("device is now in inject mode\n");
     }
-  }
-  else if (strstr (arg, "realtime") == &arg[3]) {
+  } else if (strstr(arg, "realtime") == &arg[3]) {
     if (!injectMode) {
-      s[0]->print ("device is already in realtime mode\n");
-    }
-    else {
-      digitalWrite (2, LOW);
+      s[0]->print("device is already in realtime mode\n");
+    } else {
+      digitalWrite(2, LOW);
       injectMode = false;
-      s[0]->print ("device is now in realtime mode\n");
+      s[0]->print("device is now in realtime mode\n");
     }
-  }
-  else {
+  } else {
     if (injectMode) {
-      s[0]->print ("device is currently in inject mode\n");
-    }
-    else {
-      s[0]->print ("device is currently in realtime mode\n");
+      s[0]->print("device is currently in inject mode\n");
+    } else {
+      s[0]->print("device is currently in realtime mode\n");
     }
   }
 }
 
-void setup () {
+void setup() {
   int trapState = 1;
 
-  s[0]->begin (115200);
-  s[0]->print ("--- ARDUINO MEGA SERIAL TAP ---\n");
-  s[0]->print ("to configure, type \"c (BAUDRATE, CONFIGURATION)\"\n");
-  s[0]->print ("for a list of available commands and further explanation, type \"h ()\"\n");
+  s[0]->begin(115200);
+  s[0]->print("--- ARDUINO MEGA SERIAL TAP ---\n");
+  s[0]->print("to configure, type \"c (BAUDRATE, CONFIGURATION)\"\n");
+  s[0]->print("for a list of available commands and further explanation, type \"h ()\"\n");
   //
   // we start the arduino in inject mode
   //
-  pinMode (2, OUTPUT);
-  digitalWrite (2, LOW);
+  pinMode(2, OUTPUT);
+  digitalWrite(2, LOW);
   //
   // make sure we stay in setup until a configuration is set.
   // calling h () should not trigger a jump to loop ().
   //
   while (trapState == 1) {
-    trapState = setupTrap ();
+    trapState = setupTrap();
   }
 }
 
-void loop () {
-  if (s[0]->available () > 0) {
+void loop() {
+  if (s[0]->available() > 0) {
     int i = 0;
     long time = 0;
-    char arg[2048] = {'\0'};
-    char send[2044] = {'\0'};
+    char arg[2048] = { '\0' };
+    char send[2044] = { '\0' };
     char currentByte = '\0';
     bool escape = false;
     bool done = false;
     bool flagged = false;
-    
+
     while (true) {
-      if (s[0]->available () > 0) {
+      if (s[0]->available() > 0) {
         //
         // break before array overflow.
         //
@@ -273,13 +267,12 @@ void loop () {
           break;
         }
 
-        time = millis ();
-        currentByte = (char) (s[0]->read ());
+        time = millis();
+        currentByte = (char)(s[0]->read());
         if (currentByte == '\\' && !escape) {
           escape = true;
           continue;
-        }
-        else {
+        } else {
           //
           // handle escape sequences. escape was set in the last iteration,
           // the counter was not increased. leading backslash does not appear
@@ -292,49 +285,49 @@ void loop () {
                 //
                 // alert
                 //
-                arg[i] = (char) 0x07;
+                arg[i] = (char)0x07;
                 break;
               case 'b':
                 //
                 // backspace
                 //
-                arg[i] = (char) 0x08;
+                arg[i] = (char)0x08;
                 break;
               case 'e':
                 //
                 // escape
                 //
-                arg[i] = (char) 0x1B;
+                arg[i] = (char)0x1B;
                 break;
               case 'f':
                 //
                 // form feed
                 //
-                arg[i] = (char) 0x0C;
+                arg[i] = (char)0x0C;
                 break;
               case 'n':
                 //
                 // line feed
                 //
-                arg[i] = (char) 0x0A;
+                arg[i] = (char)0x0A;
                 break;
               case 'r':
                 //
                 // carriage return
                 //
-                arg[i] = (char) 0x0D;
+                arg[i] = (char)0x0D;
                 break;
               case 't':
                 //
                 // horizontal tab
                 //
-                arg[i] = (char) 0x09;
+                arg[i] = (char)0x09;
                 break;
               case 'v':
                 //
                 // vertical tab
                 //
-                arg[i] = (char) 0x0B;
+                arg[i] = (char)0x0B;
                 break;
               default:
                 //
@@ -344,8 +337,7 @@ void loop () {
                 //
                 arg[i] = currentByte;
             }
-          }
-          else {
+          } else {
             arg[i] = currentByte;
           }
         }
@@ -356,14 +348,13 @@ void loop () {
           break;
         }
         ++i;
-      }
-      else if (time > 0 && millis () - time > 3000) {
+      } else if (time > 0 && millis() - time > 3000) {
         //
         // if we get here that usually means we received an invalid command.
         // however, if the user does not send newlines at the end of a
         // command, we still want to continue execution after 3 seconds.
         //
-        s[0]->print ("continuing after timeout. possibly missing newline at EOL?\n");
+        s[0]->print("continuing after timeout. possibly missing newline at EOL?\n");
         break;
       }
     }
@@ -372,9 +363,9 @@ void loop () {
     // there's still more data on the way
     //
     if (flagged)
-      delay (200);
+      delay(200);
 
-    if (s[0]->available ()) {
+    if (s[0]->available()) {
       //
       // we get here when there's still data in the pipeline but we already
       // exited the read loop. this happens when there's a newline character
@@ -382,23 +373,22 @@ void loop () {
       // bytes. We flush the pipeline and flag the command to prevent execution.
       // in case of a buffer overflow, the command is already flagged.
       //
-      while (s[0]->available () > 0) {
-        s[0]->read ();
+      while (s[0]->available() > 0) {
+        s[0]->read();
       }
 
       if (flagged) {
-        s[0]->print ("buffer overflow. the command size limit is 2048 bytes\n");
-      }
-      else {
-        s[0]->print ("malformed command\n");
+        s[0]->print("buffer overflow. the command size limit is 2048 bytes\n");
+      } else {
+        s[0]->print("malformed command\n");
       }
 
       flagged = true;
     }
     if (debug) {
-      s[0]->print ("received command: ");
-      s[0]->print (arg);
-      s[0]->println ();
+      s[0]->print("received command: ");
+      s[0]->print(arg);
+      s[0]->println();
     }
     if (!flagged) {
       //
@@ -407,59 +397,49 @@ void loop () {
       //
       firstMessage = true;
 
-      if (strstr (arg, "h ()") == &arg[0]) {
-        help ();
-      }
-      else if (strstr (arg, "c (") == &arg[0]) {
-        s[1]->end ();
-        s[2]->end ();
-        s[0]->print ("re-");
-        configurePorts (arg, i);
-      }
-      else if (strstr (arg, "1 (") == &arg[0]) {
+      if (strstr(arg, "h ()") == &arg[0]) {
+        help();
+      } else if (strstr(arg, "c (") == &arg[0]) {
+        s[1]->end();
+        s[2]->end();
+        s[0]->print("re-");
+        configurePorts(arg, i);
+      } else if (strstr(arg, "1 (") == &arg[0]) {
         if (!injectMode) {
-          s[0]->print ("device is in realtime mode. data injection is not possible.\n");
-          s[0]->print ("to change the mode to inject mode, type m (inject).\n");
+          s[0]->print("device is in realtime mode. data injection is not possible.\n");
+          s[0]->print("to change the mode to inject mode, type m (inject).\n");
+        } else {
+          memcpy(send, arg + 3, i - 4);
+          s[0]->print("sending to device 1: ");
+          s[0]->print(send);
+          s[1]->write(send);
+          s[0]->println();
         }
-        else {
-          memcpy (send, arg + 3, i - 4);
-          s[0]->print ("sending to device 1: ");
-          s[0]->print (send);
-          s[1]->write (send);
-          s[0]->println ();
-        }
-      }
-      else if (strstr (arg, "2 (") == &arg[0]) {
+      } else if (strstr(arg, "2 (") == &arg[0]) {
         if (!injectMode) {
-          s[0]->print ("device is in realtime mode. data injection is not possible.\n");
-          s[0]->print ("to change the mode to inject mode, type m (inject).\n");
+          s[0]->print("device is in realtime mode. data injection is not possible.\n");
+          s[0]->print("to change the mode to inject mode, type m (inject).\n");
+        } else {
+          memcpy(send, arg + 3, i - 4);
+          s[0]->print("sending to device 2: ");
+          s[0]->print(send);
+          s[2]->write(send);
+          s[0]->println();
         }
-        else {
-          memcpy (send, arg + 3, i - 4);
-          s[0]->print ("sending to device 2: ");
-          s[0]->print (send);
-          s[2]->write (send);
-          s[0]->println ();
-        }
-      }
-      else if (strstr (arg, "debug ()") == &arg[0]) {
+      } else if (strstr(arg, "debug ()") == &arg[0]) {
         if (!debug) {
           debug = true;
-          s[0]->print ("debug mode enabled\n");
-        }
-        else {
+          s[0]->print("debug mode enabled\n");
+        } else {
           debug = false;
-          s[0]->print ("debug mode disabled\n");
+          s[0]->print("debug mode disabled\n");
         }
-      }
-      else if (strstr (arg, "reset ()") == &arg[0]) {
-        softReset ();
-      }
-      else if (strstr (arg, "m (") == &arg[0]) {
-        modeSwitch (arg);
-      }
-      else {
-        s[0]->print ("invalid command\n");
+      } else if (strstr(arg, "reset ()") == &arg[0]) {
+        softReset();
+      } else if (strstr(arg, "m (") == &arg[0]) {
+        modeSwitch(arg);
+      } else {
+        s[0]->print("invalid command\n");
       }
     }
   }
@@ -467,26 +447,25 @@ void loop () {
   // forwarding data between the two serial ports and simultaneously
   // writing it to our console
   //
-  if (s[1]->available () > 0) {
+  if (s[1]->available() > 0) {
     char currentByte = '\0';
 
     if (secondDevice) {
       secondDevice = false;
-      s[0]->print ("\n1: ");
-    }
-    else if (firstMessage) {
+      s[0]->print("\n1: ");
+    } else if (firstMessage) {
       firstMessage = false;
-      s[0]->print ("\n1: ");
+      s[0]->print("\n1: ");
     }
 
-    for (int i = 1; i <= s[1]->available (); ++i) {
-      currentByte = s[1]->read ();
-      s[2]->write (currentByte);
-      s[0]->write (currentByte);
+    for (int i = 1; i <= s[1]->available(); ++i) {
+      currentByte = s[1]->read();
+      s[2]->write(currentByte);
+      s[0]->write(currentByte);
     }
   }
 
-  if (s[2]->available () > 0) {
+  if (s[2]->available() > 0) {
     char currentByte = '\0';
 
     if (!secondDevice) {
@@ -494,21 +473,20 @@ void loop () {
       //
       // secondDevice is false by default, so if device 2 is the first one
       // to send data, it will print "\n2: " before the first and before
-      // the second character, so we need to make sure firstMessage is 
+      // the second character, so we need to make sure firstMessage is
       // false when we print the indicator the first time.
       //
       firstMessage = false;
-      s[0]->print ("\n2: ");
-    }
-    else if (firstMessage) {
+      s[0]->print("\n2: ");
+    } else if (firstMessage) {
       firstMessage = false;
-      s[0]->print ("\n2: ");
+      s[0]->print("\n2: ");
     }
 
-    for (int i = 1; i <= s[2]->available (); ++i) {
-      currentByte = s[2]->read ();
-      s[1]->write (currentByte);
-      s[0]->write (currentByte);
+    for (int i = 1; i <= s[2]->available(); ++i) {
+      currentByte = s[2]->read();
+      s[1]->write(currentByte);
+      s[0]->write(currentByte);
     }
   }
 }
