@@ -109,47 +109,55 @@ void configurePorts(const char arg[], const int i) {
 }
 
 void help() {
-  s[0]->print("\n\n--- ARDUINO MEGA SERIAL TAP HELP ---\n\n");
-  s[0]->print("c (BAUDRATE, CONFIGURATION)   -   configure the RS-232 tap ports\n");
-  s[0]->print("    BAUDRATE can be a number between 1 and 2,000,000\n");
-  s[0]->print("    CONFIGURATION is a 3-character-combination of data bits, parity and stop bits\n");
-  s[0]->print("        supported data bits: 5, 6, 7, 8\n");
-  s[0]->print("        supported parities:  N (none), E (even parity), O (odd parity)\n");
-  s[0]->print("        supported stop bits: 1, 2\n");
-  s[0]->print("\n");
-  s[0]->print("    examples:\n");
-  s[0]->print("        c (115200, 8N1)\n");
-  s[0]->print("        c (5579, 6E2)\n");
-  s[0]->print("\n\n");
-  s[0]->print("1 (STRING) / 2 (STRING)   -   inject data into serial communication between tapped devices\n");
-  s[0]->print("    1 (): send data to serial device 1\n");
-  s[0]->print("    2 (): send data to serial device 2\n");
-  s[0]->print("\n");
-  s[0]->print("    C escape sequences are supported (except for bytes and unicode)\n");
-  s[0]->print("\n");
-  s[0]->print("    examples:\n");
-  s[0]->print("        1 (Hello, World!)\n");
-  s[0]->print("        2 (printf (\"Hello, robot!\\n\"))\n");
-  s[0]->print("\n\n");
-  s[0]->print("m (MODE)   -   switch between inject and realtime mode\n");
-  s[0]->print("    change the operating mode of the serial tap.\n");
-  s[0]->print("    in inject mode, all serial data is relayed between the two serial\n");
-  s[0]->print("    devices by the arduino. this allows you to inject data into the communication.\n");
-  s[0]->print("\n");
-  s[0]->print("    in realtime mode (the default), both participants have a direct electrical connection to each other.\n");
-  s[0]->print("    this is useful for communication where timing is critical. injection is not possible\n");
-  s[0]->print("    in this mode.\n");
-  s[0]->print("\n");
-  s[0]->print("    MODE can be either inject or realtime\n");
-  s[0]->print("        if no mode or an invalid mode is supplied, it will simply print the current mode.\n");
-  s[0]->print("\n\n");
-  s[0]->print("h ()   -   display this help message\n");
-  s[0]->print("\n\n");
-  s[0]->print("debug ()   -   toggle debug mode\n");
-  s[0]->print("    toggle echo of commands received\n");
-  s[0]->print("\n\n");
-  s[0]->print("reset ()   -   reset arduino\n");
-  s[0]->print("    this can be useful when you don't have access to the physical reset button\n");
+  s[0]->println();
+  s[0]->println();
+  s[0]->println("--- ARDUINO MEGA SERIAL TAP HELP ---");
+  s[0]->println();
+  s[0]->println("c (BAUDRATE, CONFIGURATION)   -   configure the RS-232 tap ports");
+  s[0]->println("    BAUDRATE can be a number between 1 and 2,000,000");
+  s[0]->println("    CONFIGURATION is a 3-character-combination of data bits, parity and stop bits");
+  s[0]->println("        supported data bits: 5, 6, 7, 8");
+  s[0]->println("        supported parities:  N (none), E (even parity), O (odd parity)");
+  s[0]->println("        supported stop bits: 1, 2");
+  s[0]->println();
+  s[0]->println("    examples:");
+  s[0]->println("        c (115200, 8N1)");
+  s[0]->println("        c (5579, 6E2)");
+  s[0]->println();
+  s[0]->println();
+  s[0]->println("1 (STRING) / 2 (STRING)   -   inject data into serial communication between tapped devices");
+  s[0]->println("    1 (): send data to serial device 1");
+  s[0]->println("    2 (): send data to serial device 2");
+  s[0]->println();
+  s[0]->println("    C escape sequences are supported (except for bytes and unicode)");
+  s[0]->println();
+  s[0]->println("    examples:");
+  s[0]->println("        1 (Hello, World!)");
+  s[0]->println("        2 (printf (\"Hello, robot!\\n\"))");
+  s[0]->println();
+  s[0]->println();
+  s[0]->println("m (MODE)   -   switch between inject and realtime mode");
+  s[0]->println("    change the operating mode of the serial tap.");
+  s[0]->println("    in inject mode, all serial data is relayed between the two serial");
+  s[0]->println("    devices by the arduino. this allows you to inject data into the communication.");
+  s[0]->println();
+  s[0]->println("    in realtime mode (the default), both participants have a direct electrical connection to each other.");
+  s[0]->println("    this is useful for communication where timing is critical. injection is not possible");
+  s[0]->println("    in this mode.");
+  s[0]->println();
+  s[0]->println("    MODE can be either inject or realtime");
+  s[0]->println("        if no mode or an invalid mode is supplied, it will simply print the current mode.");
+  s[0]->println();
+  s[0]->println();
+  s[0]->println("h ()   -   display this help message");
+  s[0]->println();
+  s[0]->println();
+  s[0]->println("debug ()   -   toggle debug mode");
+  s[0]->println("    toggle echo of commands received");
+  s[0]->println();
+  s[0]->println();
+  s[0]->println("reset ()   -   reset arduino");
+  s[0]->println("    this can be useful when you don't have access to the physical reset button");
 }
 
 int setupTrap() {
@@ -202,25 +210,25 @@ void softReset() {
 void modeSwitch(const char arg[]) {
   if (strstr(arg, "inject") == &arg[3]) {
     if (injectMode) {
-      s[0]->print("device is already in inject mode\n");
+      s[0]->println("device is already in inject mode");
     } else {
       digitalWrite(2, HIGH);
       injectMode = true;
-      s[0]->print("device is now in inject mode\n");
+      s[0]->println("device is now in inject mode");
     }
   } else if (strstr(arg, "realtime") == &arg[3]) {
     if (!injectMode) {
-      s[0]->print("device is already in realtime mode\n");
+      s[0]->println("device is already in realtime mode");
     } else {
       digitalWrite(2, LOW);
       injectMode = false;
-      s[0]->print("device is now in realtime mode\n");
+      s[0]->println("device is now in realtime mode");
     }
   } else {
     if (injectMode) {
-      s[0]->print("device is currently in inject mode\n");
+      s[0]->println("device is currently in inject mode");
     } else {
-      s[0]->print("device is currently in realtime mode\n");
+      s[0]->println("device is currently in realtime mode");
     }
   }
 }
@@ -229,9 +237,9 @@ void setup() {
   int trapState = 1;
 
   s[0]->begin(115200);
-  s[0]->print("--- ARDUINO MEGA SERIAL TAP ---\n");
-  s[0]->print("to configure, type \"c (BAUDRATE, CONFIGURATION)\"\n");
-  s[0]->print("for a list of available commands and further explanation, type \"h ()\"\n");
+  s[0]->println("--- ARDUINO MEGA SERIAL TAP ---");
+  s[0]->println("to configure, type \"c (BAUDRATE, CONFIGURATION)\"");
+  s[0]->println("for a list of available commands and further explanation, type \"h ()\"");
   //
   // we start the arduino in inject mode
   //
@@ -344,7 +352,7 @@ void loop() {
         //
         // we expect only one newline per command
         //
-        if (currentByte == '\n') {
+        if (currentByte == '\n' || currentByte == '\r') {
           break;
         }
         ++i;
@@ -354,7 +362,7 @@ void loop() {
         // however, if the user does not send newlines at the end of a
         // command, we still want to continue execution after 3 seconds.
         //
-        s[0]->print("continuing after timeout. possibly missing newline at EOL?\n");
+        s[0]->println("continuing after timeout. possibly missing newline at EOL?");
         break;
       }
     }
@@ -378,9 +386,9 @@ void loop() {
       }
 
       if (flagged) {
-        s[0]->print("buffer overflow. the command size limit is 2048 bytes\n");
+        s[0]->println("buffer overflow. the command size limit is 2048 bytes");
       } else {
-        s[0]->print("malformed command\n");
+        s[0]->println("malformed command");
       }
 
       flagged = true;
@@ -406,8 +414,8 @@ void loop() {
         configurePorts(arg, i);
       } else if (strstr(arg, "1 (") == &arg[0]) {
         if (!injectMode) {
-          s[0]->print("device is in realtime mode. data injection is not possible.\n");
-          s[0]->print("to change the mode to inject mode, type m (inject).\n");
+          s[0]->println("device is in realtime mode. data injection is not possible.");
+          s[0]->println("to change the mode to inject mode, type \"m (inject)\".");
         } else {
           memcpy(send, arg + 3, i - 4);
           s[0]->print("sending to device 1: ");
@@ -417,8 +425,8 @@ void loop() {
         }
       } else if (strstr(arg, "2 (") == &arg[0]) {
         if (!injectMode) {
-          s[0]->print("device is in realtime mode. data injection is not possible.\n");
-          s[0]->print("to change the mode to inject mode, type m (inject).\n");
+          s[0]->println("device is in realtime mode. data injection is not possible.");
+          s[0]->println("to change the mode to inject mode, type \"m (inject)\".");
         } else {
           memcpy(send, arg + 3, i - 4);
           s[0]->print("sending to device 2: ");
@@ -429,17 +437,17 @@ void loop() {
       } else if (strstr(arg, "debug ()") == &arg[0]) {
         if (!debug) {
           debug = true;
-          s[0]->print("debug mode enabled\n");
+          s[0]->println("debug mode enabled");
         } else {
           debug = false;
-          s[0]->print("debug mode disabled\n");
+          s[0]->println("debug mode disabled");
         }
       } else if (strstr(arg, "reset ()") == &arg[0]) {
         softReset();
       } else if (strstr(arg, "m (") == &arg[0]) {
         modeSwitch(arg);
       } else {
-        s[0]->print("invalid command\n");
+        s[0]->println("invalid command");
       }
     }
   }
