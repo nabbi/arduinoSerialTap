@@ -1,3 +1,4 @@
 .vscode
 serialTap.code-workspace
 build
+*.drawio.bkp

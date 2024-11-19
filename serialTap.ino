@@ -178,7 +178,7 @@ int setupTrap() {
         break;
       }
       arg[i] = (char)(s[0]->read());
-      if (arg[i] == '\n') {
+      if (arg[i] == '\n' || arg[i] == '\r') {
         break;
       }
       ++i;
@@ -470,6 +470,11 @@ void loop() {
       currentByte = s[1]->read();
       s[2]->write(currentByte);
       s[0]->write(currentByte);
+      if (debug) {
+        s[0]->print("<");
+        s[0]->print(currentByte, HEX);
+        s[0]->print(">");
+      }
     }
   }
 
@@ -495,6 +500,11 @@ void loop() {
       currentByte = s[2]->read();
       s[1]->write(currentByte);
       s[0]->write(currentByte);
+      if (debug) {
+        s[0]->print("<");
+        s[0]->print(currentByte, HEX);
+        s[0]->print(">");
+      }
     }
   }
 }
