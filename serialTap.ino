@@ -15,8 +15,8 @@ void wdt_init(void) {
 }
 
 void configurePorts(const char arg[], const int i) {
-  char baudC[8] = { '0' };
-  char config[4] = { '0' };
+  char baudC[8] = { '\0' };
+  char config[4] = { '\0' };
   long baud = 0;
 
   //
@@ -26,13 +26,21 @@ void configurePorts(const char arg[], const int i) {
   // be valid so we assign default values instead.
   //
   if (i > 9) {
-    memcpy(baudC, arg + 3, i - 9);
+    int blen = i - 9;
+    if (blen > (int)sizeof(baudC) - 1) blen = (int)sizeof(baudC) - 1;
+    if (blen < 0) blen = 0;
+
+    memcpy(baudC, arg + 3, blen);
+    baudC[blen] = '\0';
     baud = atol(baudC);
     //
     // the configuration always has a length of 3 and is located 4
     // chars before the newline character.
     //
     memcpy(config, arg + i - 4, 3);
+    config[3] = '\0';
+  } else {
+    config[0] = '\0';
   }
 
   uint8_t c;
@@ -93,6 +101,7 @@ void configurePorts(const char arg[], const int i) {
     config[0] = '8';
     config[1] = 'N';
     config[2] = '1';
+    config[3] = '\0';
   }
 
   if (baud < 1 || baud > 2000000)
@@ -163,7 +172,7 @@ void help() {
 int setupTrap() {
   int i = 0;
   char arg[20] = { '\0' };
-  long time = 0;
+  unsigned long time = 0;
 
   while (true) {
     if (s[0]->available() > 0) {
@@ -174,7 +183,7 @@ int setupTrap() {
       // get one, we want to stop reading after 20 characters so we don't
       // overflow the array.
       //
-      if (i == 20) {
+      if (i >= (int)sizeof(arg) - 1) {
         break;
       }
       arg[i] = (char)(s[0]->read());
@@ -191,6 +200,9 @@ int setupTrap() {
       break;
     }
   }
+
+  arg[i] = '\0';
+
   if (strstr(arg, "h ()") == &arg[0]) {
     help();
     return 1;
@@ -202,9 +214,9 @@ int setupTrap() {
 }
 
 void softReset() {
+  cli();
   wdt_enable(WDTO_15MS);
-  while (1)
-    ;
+  while (1) {}
 }
 
 void modeSwitch(const char arg[]) {
@@ -257,12 +269,11 @@ void setup() {
 void loop() {
   if (s[0]->available() > 0) {
     int i = 0;
-    long time = 0;
+    unsigned long time = 0;
     char arg[2048] = { '\0' };
     char send[2044] = { '\0' };
     char currentByte = '\0';
     bool escape = false;
-    bool done = false;
     bool flagged = false;
 
     while (true) {
@@ -270,7 +281,7 @@ void loop() {
         //
         // break before array overflow.
         //
-        if (i == 2048) {
+        if (i >= (int)sizeof(arg) - 1) {
           flagged = true;
           break;
         }
@@ -366,6 +377,7 @@ void loop() {
         break;
       }
     }
+    arg[i] = '\0';
     //
     // when there's a buffer overflow, the input buffer might be empty although
     // there's still more data on the way
@@ -417,22 +429,55 @@ void loop() {
           s[0]->println("device is in realtime mode. data injection is not possible.");
           s[0]->println("to change the mode to inject mode, type \"m (inject)\".");
         } else {
-          memcpy(send, arg + 3, i - 4);
-          s[0]->print("sending to device 1: ");
-          s[0]->print(send);
-          s[1]->write(send);
-          s[0]->println();
+          int slen = 0;
+          const char *rp = strrchr(arg, ')');
+
+          if (rp == NULL || rp < &arg[3]) {
+            s[0]->println("malformed command");
+            flagged = true;
+          } else {
+            slen = (int)(rp - (arg + 3));
+            if (slen > (int)sizeof(send) - 1)
+              slen = (int)sizeof(send) - 1;
+
+            memcpy(send, arg + 3, slen);
+            send[slen] = '\0';
+          }
+
+          if (!flagged) {
+            s[0]->print("sending to device 1: ");
+            s[0]->print(send);
+            s[1]->write((const uint8_t *)send, (size_t)slen);
+            s[0]->println();
+          }
         }
+
       } else if (strstr(arg, "2 (") == &arg[0]) {
         if (!injectMode) {
           s[0]->println("device is in realtime mode. data injection is not possible.");
           s[0]->println("to change the mode to inject mode, type \"m (inject)\".");
         } else {
-          memcpy(send, arg + 3, i - 4);
-          s[0]->print("sending to device 2: ");
-          s[0]->print(send);
-          s[2]->write(send);
-          s[0]->println();
+          int slen = 0;
+          const char *rp = strrchr(arg, ')');
+
+          if (rp == NULL || rp < &arg[3]) {
+            s[0]->println("malformed command");
+            flagged = true;
+          } else {
+            slen = (int)(rp - (arg + 3));
+            if (slen > (int)sizeof(send) - 1)
+              slen = (int)sizeof(send) - 1;
+
+            memcpy(send, arg + 3, slen);
+            send[slen] = '\0';
+          }
+
+          if (!flagged) {
+            s[0]->print("sending to device 2: ");
+            s[0]->print(send);
+            s[2]->write((const uint8_t *)send, (size_t)slen);
+            s[0]->println();
+          }
         }
       } else if (strstr(arg, "debug ()") == &arg[0]) {
         if (!debug) {
@@ -466,13 +511,14 @@ void loop() {
       s[0]->print("\n1: ");
     }
 
-    for (int i = 1; i <= s[1]->available(); ++i) {
+    int n = s[1]->available();
+    for (int i = 0; i < n; ++i) {
       currentByte = s[1]->read();
       s[2]->write(currentByte);
       s[0]->write(currentByte);
       if (debug) {
         s[0]->print("<");
-        s[0]->print(currentByte, HEX);
+        s[0]->print((uint8_t)currentByte, HEX);
         s[0]->print(">");
       }
     }
@@ -496,13 +542,14 @@ void loop() {
       s[0]->print("\n2: ");
     }
 
-    for (int i = 1; i <= s[2]->available(); ++i) {
+    int n = s[2]->available();
+    for (int i = 0; i < n; ++i) {
       currentByte = s[2]->read();
       s[1]->write(currentByte);
       s[0]->write(currentByte);
       if (debug) {
         s[0]->print("<");
-        s[0]->print(currentByte, HEX);
+        s[0]->print((uint8_t)currentByte, HEX);
         s[0]->print(">");
       }
     }
