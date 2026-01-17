@@ -1,6 +1,6 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17">
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.2 Chrome/134.0.6998.178 Electron/35.1.2 Safari/537.36" version="26.2.2">
   <diagram name="Page-1" id="y5cDMIoNWBEWQ94frJKz">
-    <mxGraphModel dx="1140" dy="1054" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1700" math="0" shadow="0">
+    <mxGraphModel dx="2237" dy="2022" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1700" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -263,6 +263,21 @@
         <mxCell id="azgMCvpfqpiOP1GUNGo0-37" value="RX" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="azgMCvpfqpiOP1GUNGo0-35" vertex="1" connectable="0">
           <mxGeometry x="0.9088" y="-1" relative="1" as="geometry">
             <mxPoint y="6" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lXQifu6983s_8Wed31gf-1" value="" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;endArrow=none;endFill=0;exitX=0.916;exitY=-0.008;exitDx=0;exitDy=0;exitPerimeter=0;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="azgMCvpfqpiOP1GUNGo0-17">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1480" y="580" as="targetPoint" />
+            <mxPoint x="1890" y="610" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="2110" y="500" />
+              <mxPoint x="1481" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lXQifu6983s_8Wed31gf-3" value="Common Ground" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="lXQifu6983s_8Wed31gf-1">
+          <mxGeometry x="0.3483" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
       </root>
