@@ -275,6 +275,7 @@ void loop() {
     char currentByte = '\0';
     bool escape = false;
     bool flagged = false;
+    bool autoCR = true;
 
     while (true) {
       if (s[0]->available() > 0) {
@@ -288,6 +289,21 @@ void loop() {
 
         time = millis();
         currentByte = (char)(s[0]->read());
+
+        if (debug) {
+          // echo local commands typed
+          if (currentByte == '\r' || currentByte == '\n') {
+            s[0]->println();
+          } else if (currentByte == 0x08 || currentByte == 0x7F) {
+            // backspace or delete
+            s[0]->write('\b');
+            s[0]->write(' ');
+            s[0]->write('\b');
+          } else {
+            s[0]->write(currentByte);
+          }
+        }
+
         if (currentByte == '\\' && !escape) {
           escape = true;
           continue;
@@ -448,6 +464,9 @@ void loop() {
             s[0]->print("sending to device 1: ");
             s[0]->print(send);
             s[1]->write((const uint8_t *)send, (size_t)slen);
+            if (autoCR && (slen == 0 || (send[slen - 1] != '\r' && send[slen - 1] != '\n'))) {
+              s[1]->write((uint8_t)'\r');
+            }
             s[0]->println();
           }
         }
@@ -476,6 +495,9 @@ void loop() {
             s[0]->print("sending to device 2: ");
             s[0]->print(send);
             s[2]->write((const uint8_t *)send, (size_t)slen);
+            if (autoCR && (slen == 0 || (send[slen - 1] != '\r' && send[slen - 1] != '\n'))) {
+              s[2]->write((uint8_t)'\r');
+            }
             s[0]->println();
           }
         }
@@ -515,11 +537,16 @@ void loop() {
     for (int i = 0; i < n; ++i) {
       currentByte = s[1]->read();
       s[2]->write(currentByte);
-      s[0]->write(currentByte);
       if (debug) {
         s[0]->print("<");
         s[0]->print((uint8_t)currentByte, HEX);
         s[0]->print(">");
+      }
+      if (currentByte == '\r') {
+        s[0]->write('\r');
+        s[0]->write('\n');
+      } else {
+        s[0]->write(currentByte);
       }
     }
   }
@@ -546,11 +573,16 @@ void loop() {
     for (int i = 0; i < n; ++i) {
       currentByte = s[2]->read();
       s[1]->write(currentByte);
-      s[0]->write(currentByte);
       if (debug) {
         s[0]->print("<");
         s[0]->print((uint8_t)currentByte, HEX);
         s[0]->print(">");
+      }
+      if (currentByte == '\r') {
+        s[0]->write('\r');
+        s[0]->write('\n');
+      } else {
+        s[0]->write(currentByte);
       }
     }
   }
