@@ -87,6 +87,16 @@ To get an overview over available commands, this command can be used:
 h ()
 ```
 
+## Testing
+Host-side unit tests for the parsing logic (escape sequences, backspace handling, buffer overflow protection) are located in `test/test_parsing.cpp`.
+
+To build and run:
+```
+g++ -std=c++11 -Wall -Wextra -o test/test_parsing test/test_parsing.cpp && ./test/test_parsing
+```
+
+The tests run on the host machine (no Arduino hardware required) and will print a pass/fail summary with a non-zero exit code on failure.
+
 ### Debugging
 At the moment, there is only one debug measure; having the Arduino reply back to you with the command it received. That can be toggled with this command:
 ```

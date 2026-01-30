@@ -1,6 +1,13 @@
 #include <avr/wdt.h>
 #include "serialTap.h"
 
+// --- Global variable definitions (declared extern in serialTap.h) ---
+HardwareSerial *s[3] = {&Serial, &Serial1, &Serial2};
+bool injectMode = false;
+bool secondDevice = false;
+bool firstMessage = true;
+bool debug = false;
+
 //
 // newer arduinos keep the watchdog enabled after reset, so we need to
 // disable it manually in the pre boot stage
@@ -15,7 +22,7 @@ void wdt_init(void) {
 }
 
 void configurePorts(const char arg[], const int i) {
-  char baudC[8] = { '\0' };
+  char baudC[BAUD_BUF_SIZE] = { '\0' };
   char config[4] = { '\0' };
   long baud = 0;
 
@@ -171,7 +178,7 @@ void help() {
 
 int setupTrap() {
   int i = 0;
-  char arg[20] = { '\0' };
+  char arg[SETUP_BUF_SIZE] = { '\0' };
   unsigned long time = 0;
 
   while (true) {
@@ -196,7 +203,7 @@ int setupTrap() {
     // if there's no new data after 3 seconds, we assume the data
     // transmission is over.
     //
-    else if (time > 0 && millis() - time > 3000) {
+    else if (time > 0 && millis() - time > CMD_TIMEOUT_MS) {
       break;
     }
   }
@@ -224,7 +231,7 @@ void modeSwitch(const char arg[]) {
     if (injectMode) {
       s[0]->println("device is already in inject mode");
     } else {
-      digitalWrite(2, HIGH);
+      digitalWrite(MODE_PIN, HIGH);
       injectMode = true;
       s[0]->println("device is now in inject mode");
     }
@@ -232,7 +239,7 @@ void modeSwitch(const char arg[]) {
     if (!injectMode) {
       s[0]->println("device is already in realtime mode");
     } else {
-      digitalWrite(2, LOW);
+      digitalWrite(MODE_PIN, LOW);
       injectMode = false;
       s[0]->println("device is now in realtime mode");
     }
@@ -253,10 +260,10 @@ void setup() {
   s[0]->println("to configure, type \"c (BAUDRATE, CONFIGURATION)\"");
   s[0]->println("for a list of available commands and further explanation, type \"h ()\"");
   //
-  // we start the arduino in inject mode
+  // we start the arduino in realtime mode
   //
-  pinMode(2, OUTPUT);
-  digitalWrite(2, LOW);
+  pinMode(MODE_PIN, OUTPUT);
+  digitalWrite(MODE_PIN, LOW);
   //
   // make sure we stay in setup until a configuration is set.
   // calling h () should not trigger a jump to loop ().
@@ -267,15 +274,23 @@ void setup() {
 }
 
 void loop() {
+  //
+  // static buffers: avoids placing ~4KB on the stack every loop() call,
+  // which risks stack-heap collision on the Mega's 8KB SRAM.
+  //
+  static char arg[CMD_BUF_SIZE];
+  static char send[SEND_BUF_SIZE];
+
   if (s[0]->available() > 0) {
     int i = 0;
     unsigned long time = 0;
-    char arg[2048] = { '\0' };
-    char send[2044] = { '\0' };
     char currentByte = '\0';
     bool escape = false;
     bool flagged = false;
     bool autoCR = true;
+
+    memset(arg, 0, sizeof(arg));
+    memset(send, 0, sizeof(send));
 
     while (true) {
       if (s[0]->available() > 0) {
@@ -302,6 +317,17 @@ void loop() {
           } else {
             s[0]->write(currentByte);
           }
+        }
+
+        //
+        // handle backspace/delete: remove the previous character from
+        // the buffer instead of storing the control code.
+        //
+        if (currentByte == 0x08 || currentByte == 0x7F) {
+          if (i > 0) {
+            --i;
+          }
+          continue;
         }
 
         if (currentByte == '\\' && !escape) {
@@ -383,7 +409,7 @@ void loop() {
           break;
         }
         ++i;
-      } else if (time > 0 && millis() - time > 3000) {
+      } else if (time > 0 && millis() - time > CMD_TIMEOUT_MS) {
         //
         // if we get here that usually means we received an invalid command.
         // however, if the user does not send newlines at the end of a
@@ -523,7 +549,7 @@ void loop() {
   // writing it to our console
   //
   if (s[1]->available() > 0) {
-    char currentByte = '\0';
+    uint8_t currentByte = 0;
 
     if (secondDevice) {
       secondDevice = false;
@@ -535,11 +561,13 @@ void loop() {
 
     int n = s[1]->available();
     for (int i = 0; i < n; ++i) {
-      currentByte = s[1]->read();
-      s[2]->write(currentByte);
+      currentByte = (uint8_t)s[1]->read();
+      if (injectMode) {
+        s[2]->write(currentByte);
+      }
       if (debug) {
         s[0]->print("<");
-        s[0]->print((uint8_t)currentByte, HEX);
+        s[0]->print(currentByte, HEX);
         s[0]->print(">");
       }
       if (currentByte == '\r') {
@@ -552,7 +580,7 @@ void loop() {
   }
 
   if (s[2]->available() > 0) {
-    char currentByte = '\0';
+    uint8_t currentByte = 0;
 
     if (!secondDevice) {
       secondDevice = true;
@@ -571,11 +599,13 @@ void loop() {
 
     int n = s[2]->available();
     for (int i = 0; i < n; ++i) {
-      currentByte = s[2]->read();
-      s[1]->write(currentByte);
+      currentByte = (uint8_t)s[2]->read();
+      if (injectMode) {
+        s[1]->write(currentByte);
+      }
       if (debug) {
         s[0]->print("<");
-        s[0]->print((uint8_t)currentByte, HEX);
+        s[0]->print(currentByte, HEX);
         s[0]->print(">");
       }
       if (currentByte == '\r') {

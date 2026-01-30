@@ -2,3 +2,4 @@
 serialTap.code-workspace
 build
 *.drawio.bkp
+test/test_parsing
