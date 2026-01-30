@@ -162,7 +162,7 @@ static void test_delete_key() {
 static void test_max_buffer_throughput() {
   TEST(max_buffer_throughput);
   // Fill a CMD_BUF_SIZE-sized input with printable chars, terminated by \n
-  const int SZ = 2048;
+  const int SZ = 1024;
   char input[SZ + 1];
   char out[SZ + 1];
   for (int i = 0; i < SZ - 1; i++) input[i] = 'A' + (i % 26);

@@ -1,8 +1,8 @@
 # Arduino Serial Tap
 A serial tap that allows reading of and data injection into a serial connection between two devices.
 
-This software was written for the Arduino Mega 2560, but it could potentially work on an Arduino Uno or other devices programmable through the Arduino IDE 
-too by utilising software serial. This is not currently implemented though since software serial might not be fast enough to ensure 
+This software was written for the Arduino Mega 2560, but it could potentially work on an Arduino Uno or other devices programmable through the Arduino IDE
+too by utilising software serial. This is not currently implemented though since software serial might not be fast enough to ensure
 stable passthrough at high baud rates.
 
 ## Setup
@@ -49,8 +49,8 @@ The difference between the two modes is as follows:
 * Inject mode:
   * The RX and TX lines of one serial device are connected to one of the arduino's  
   UARTs respectively. The arduino needs to relay data between the devices to allow  
-  commmunication between them. This allows for data injection, since the two devices  
-  can be treated as two seperate serial commmunications.
+  communication between them. This allows for data injection, since the two devices
+  can be treated as two separate serial communications.
 
 To switch between modes, the switching command can be used:
 ```
@@ -63,7 +63,7 @@ If no mode or an invalid mode is supplied, the current mode will be printed.
 To inject data into the serial communication, one can use the commands `1 ()` and `2 ()` respectively. Anything between the parentheses will be sent to either
 the first or the second serial device. C escape sequences are supported (with the exception of byte and unicode sequences).
 
-For example, to send the string 
+For example, to send the string
 ```
 super cool list
   - with tabs

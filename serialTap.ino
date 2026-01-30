@@ -217,7 +217,6 @@ int setupTrap() {
     configurePorts(arg, i);
     return 0;
   }
-  return 1;
 }
 
 void softReset() {
@@ -515,7 +514,7 @@ void loop() {
       }
 
       if (flagged) {
-        s[0]->println("buffer overflow. the command size limit is 2048 bytes");
+        s[0]->println("buffer overflow. the command size limit is 1024 bytes");
       } else {
         s[0]->println("malformed command");
       }
