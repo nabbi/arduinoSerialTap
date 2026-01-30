@@ -2,7 +2,7 @@
 #include "serialTap.h"
 
 // --- Global variable definitions (declared extern in serialTap.h) ---
-HardwareSerial *s[3] = {&Serial, &Serial1, &Serial2};
+HardwareSerial *s[3] = { &Serial, &Serial1, &Serial2 };
 bool injectMode = false;
 bool secondDevice = false;
 bool firstMessage = true;
