@@ -252,10 +252,82 @@ void modeSwitch(const char arg[]) {
   }
 }
 
+//
+// relay data between serial1 and serial2, writing tap output to the
+// console. extracted so it can be called during command input without
+// stalling the forwarding path.
+//
+void relay() {
+  if (s[1]->available() > 0) {
+    if (secondDevice) {
+      secondDevice = false;
+      s[0]->print("\n1: ");
+    } else if (firstMessage) {
+      firstMessage = false;
+      s[0]->print("\n1: ");
+    }
+
+    static uint8_t buf1[SERIAL_RX_BUFFER_SIZE];
+    int n = min(s[1]->available(), (int)sizeof(buf1));
+    for (int i = 0; i < n; ++i) {
+      buf1[i] = (uint8_t)s[1]->read();
+    }
+    if (injectMode) {
+      s[2]->write(buf1, n);
+    }
+    for (int i = 0; i < n; ++i) {
+      if (debug) {
+        s[0]->print("<");
+        s[0]->print(buf1[i], HEX);
+        s[0]->print(">");
+      }
+      if (buf1[i] == '\r') {
+        s[0]->write('\r');
+        s[0]->write('\n');
+      } else {
+        s[0]->write(buf1[i]);
+      }
+    }
+  }
+
+  if (s[2]->available() > 0) {
+    if (!secondDevice) {
+      secondDevice = true;
+      firstMessage = false;
+      s[0]->print("\n2: ");
+    } else if (firstMessage) {
+      firstMessage = false;
+      s[0]->print("\n2: ");
+    }
+
+    static uint8_t buf2[SERIAL_RX_BUFFER_SIZE];
+    int n = min(s[2]->available(), (int)sizeof(buf2));
+    for (int i = 0; i < n; ++i) {
+      buf2[i] = (uint8_t)s[2]->read();
+    }
+    if (injectMode) {
+      s[1]->write(buf2, n);
+    }
+    for (int i = 0; i < n; ++i) {
+      if (debug) {
+        s[0]->print("<");
+        s[0]->print(buf2[i], HEX);
+        s[0]->print(">");
+      }
+      if (buf2[i] == '\r') {
+        s[0]->write('\r');
+        s[0]->write('\n');
+      } else {
+        s[0]->write(buf2[i]);
+      }
+    }
+  }
+}
+
 void setup() {
   int trapState = 1;
 
-  s[0]->begin(115200);
+  s[0]->begin(USB_BAUD);
   s[0]->println("--- ARDUINO MEGA SERIAL TAP ---");
   s[0]->println("to configure, type \"c (BAUDRATE, CONFIGURATION)\"");
   s[0]->println("for a list of available commands and further explanation, type \"h ()\"");
@@ -409,14 +481,17 @@ void loop() {
           break;
         }
         ++i;
-      } else if (time > 0 && millis() - time > CMD_TIMEOUT_MS) {
+      } else {
+        relay();
         //
         // if we get here that usually means we received an invalid command.
         // however, if the user does not send newlines at the end of a
         // command, we still want to continue execution after 3 seconds.
         //
-        s[0]->println("continuing after timeout. possibly missing newline at EOL?");
-        break;
+        if (time > 0 && millis() - time > CMD_TIMEOUT_MS) {
+          s[0]->println("continuing after timeout. possibly missing newline at EOL?");
+          break;
+        }
       }
     }
     arg[i] = '\0';
@@ -548,72 +623,5 @@ void loop() {
   // forwarding data between the two serial ports and simultaneously
   // writing it to our console
   //
-  if (s[1]->available() > 0) {
-    uint8_t currentByte = 0;
-
-    if (secondDevice) {
-      secondDevice = false;
-      s[0]->print("\n1: ");
-    } else if (firstMessage) {
-      firstMessage = false;
-      s[0]->print("\n1: ");
-    }
-
-    int n = s[1]->available();
-    for (int i = 0; i < n; ++i) {
-      currentByte = (uint8_t)s[1]->read();
-      if (injectMode) {
-        s[2]->write(currentByte);
-      }
-      if (debug) {
-        s[0]->print("<");
-        s[0]->print(currentByte, HEX);
-        s[0]->print(">");
-      }
-      if (currentByte == '\r') {
-        s[0]->write('\r');
-        s[0]->write('\n');
-      } else {
-        s[0]->write(currentByte);
-      }
-    }
-  }
-
-  if (s[2]->available() > 0) {
-    uint8_t currentByte = 0;
-
-    if (!secondDevice) {
-      secondDevice = true;
-      //
-      // secondDevice is false by default, so if device 2 is the first one
-      // to send data, it will print "\n2: " before the first and before
-      // the second character, so we need to make sure firstMessage is
-      // false when we print the indicator the first time.
-      //
-      firstMessage = false;
-      s[0]->print("\n2: ");
-    } else if (firstMessage) {
-      firstMessage = false;
-      s[0]->print("\n2: ");
-    }
-
-    int n = s[2]->available();
-    for (int i = 0; i < n; ++i) {
-      currentByte = (uint8_t)s[2]->read();
-      if (injectMode) {
-        s[1]->write(currentByte);
-      }
-      if (debug) {
-        s[0]->print("<");
-        s[0]->print(currentByte, HEX);
-        s[0]->print(">");
-      }
-      if (currentByte == '\r') {
-        s[0]->write('\r');
-        s[0]->write('\n');
-      } else {
-        s[0]->write(currentByte);
-      }
-    }
-  }
+  relay();
 }
