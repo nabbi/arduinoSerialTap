@@ -18,8 +18,8 @@ static const uint8_t MODE_PIN = 2;
 static const long USB_BAUD = 500000;
 
 // --- Buffer sizes ---
-static const int CMD_BUF_SIZE  = 2048;
-static const int SEND_BUF_SIZE = 2044;
+static const int CMD_BUF_SIZE  = 1024;
+static const int SEND_BUF_SIZE = 1020;
 static const int SETUP_BUF_SIZE = 20;
 static const int BAUD_BUF_SIZE = 8;
 
