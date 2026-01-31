@@ -272,9 +272,7 @@ void relay() {
     for (int i = 0; i < n; ++i) {
       buf1[i] = (uint8_t)s[1]->read();
     }
-    if (injectMode) {
-      s[2]->write(buf1, n);
-    }
+    s[2]->write(buf1, n);
     for (int i = 0; i < n; ++i) {
       if (debug) {
         s[0]->print("<");
@@ -305,9 +303,7 @@ void relay() {
     for (int i = 0; i < n; ++i) {
       buf2[i] = (uint8_t)s[2]->read();
     }
-    if (injectMode) {
-      s[1]->write(buf2, n);
-    }
+    s[1]->write(buf2, n);
     for (int i = 0; i < n; ++i) {
       if (debug) {
         s[0]->print("<");
