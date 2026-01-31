@@ -11,9 +11,15 @@ The USB serial interface is used to communicate with the sniffer. Two RS-232 con
 a chip for use with microcontrollers can be found online).
 
 ## Usage
-When the USB serial port of the Arduino is opened with a software like [HTerm](https://www.der-hammer.info/pages/terminal.html) or [CoolTerm](https://freeware.the-meiers.org), it will wait for the
-serial ports to be set up. This is done with the `c ()` command. It will not open the serial ports before a configuration is supplied! However, if a simple newline
+The USB serial interface runs at **500 000 baud** (configurable via `USB_BAUD` in `serialTap.h`).
+When the port is opened, the Arduino will wait for the serial ports to be set up. This is done with the `c ()` command. It will not open the serial ports before a configuration is supplied! However, if a simple newline
 (or any invalid combination of characters for that matter) is sent, it will initialise the ports with the default settings; 9600 8N1.
+
+To connect with `screen`:
+```
+screen /dev/ttyACM0 500000
+```
+On macOS the device is typically `/dev/tty.usbmodemXXXX` instead.
 
 **IMPORTANT: This software expects a newline character at the end of each command. If none is sent, it will take 3 seconds to time out the
 command reader before execution continues.**
@@ -62,6 +68,8 @@ If no mode or an invalid mode is supplied, the current mode will be printed.
 ### Injecting data into the serial communication
 To inject data into the serial communication, one can use the commands `1 ()` and `2 ()` respectively. Anything between the parentheses will be sent to either
 the first or the second serial device. C escape sequences are supported (with the exception of byte and unicode sequences).
+
+A carriage return (`\r`) is automatically appended if the payload does not already end with `\r` or `\n`.
 
 For example, to send the string
 ```

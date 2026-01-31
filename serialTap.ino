@@ -146,6 +146,7 @@ void help() {
   s[0]->println("    2 (): send data to serial device 2");
   s[0]->println();
   s[0]->println("    C escape sequences are supported (except for bytes and unicode)");
+  s[0]->println("    a carriage return is appended automatically unless the payload already ends with \\r or \\n");
   s[0]->println();
   s[0]->println("    examples:");
   s[0]->println("        1 (Hello, World!)");
@@ -328,6 +329,8 @@ void setup() {
 
   s[0]->begin(USB_BAUD);
   s[0]->println("--- ARDUINO MEGA SERIAL TAP ---");
+  s[0]->print("USB baud rate: ");
+  s[0]->println(USB_BAUD);
   s[0]->println("to configure, type \"c (BAUDRATE, CONFIGURATION)\"");
   s[0]->println("for a list of available commands and further explanation, type \"h ()\"");
   //
