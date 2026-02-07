@@ -158,9 +158,9 @@ void help() {
   s[0]->println("    in inject mode, all serial data is relayed between the two serial");
   s[0]->println("    devices by the arduino. this allows you to inject data into the communication.");
   s[0]->println();
-  s[0]->println("    in realtime mode (the default), both participants have a direct electrical connection to each other.");
-  s[0]->println("    this is useful for communication where timing is critical. injection is not possible");
-  s[0]->println("    in this mode.");
+  s[0]->println("    in realtime mode (the default), serial data is forwarded between the two devices");
+  s[0]->println("    with minimal overhead. this is useful for communication where timing is critical.");
+  s[0]->println("    injection is not possible in this mode.");
   s[0]->println();
   s[0]->println("    MODE can be either inject or realtime");
   s[0]->println("        if no mode or an invalid mode is supplied, it will simply print the current mode.");

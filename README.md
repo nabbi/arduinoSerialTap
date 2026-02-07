@@ -48,10 +48,9 @@ realtime mode is enabled.
 
 The difference between the two modes is as follows:
 * Realtime mode:
-  * Both the RX and TX lines of the two serial devices are directly connected to each  
-  other. The two lines are connected to the RX lines of the two UARTs of the arduino  
-  to allow for data reading. This setup is useful when communication is time critical,  
-  since the arduino does not need to relay data between the devices.
+  * Serial data is forwarded between the two devices by the arduino with minimal
+  overhead. This setup is useful when communication is time critical. Injection is
+  not possible in this mode.
 * Inject mode:
   * The RX and TX lines of one serial device are connected to one of the arduino's  
   UARTs respectively. The arduino needs to relay data between the devices to allow  

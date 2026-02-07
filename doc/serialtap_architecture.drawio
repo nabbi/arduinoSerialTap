@@ -1,0 +1,109 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.2 Chrome/134.0.6998.178 Electron/35.1.2 Safari/537.36" version="26.2.2">
+  <diagram name="High-Level Architecture" id="arch-overview">
+    <mxGraphModel dx="1924" dy="1700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="&lt;b&gt;serialTap — High-Level Architecture&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=18;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="400" y="20" width="600" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="host" value="&lt;b&gt;Host Computer&lt;/b&gt;&lt;br&gt;Serial Monitor / Terminal" style="shape=mxgraph.cisco.computers_and_peripherals.laptop;sketch=0;html=1;whiteSpace=wrap;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalLabelPosition=bottom;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="530" y="120" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="usb_link" value="USB Serial&#xa;500,000 baud" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.95;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;exitPerimeter=0;" parent="1" source="host" target="arduino_box" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="750" y="160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arduino_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;arcSize=8;" parent="1" vertex="1">
+          <mxGeometry x="360" y="320" width="780" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="arduino_label" value="&lt;b&gt;Arduino Mega 2560&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#7D6608;" parent="1" vertex="1">
+          <mxGeometry x="380" y="330" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="usb_console" value="&lt;b&gt;USB Console&lt;/b&gt;&lt;br&gt;(Serial)&lt;br&gt;&lt;hr&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Command Input&lt;br&gt;Output Formatting&lt;br&gt;Debug Display&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;verticalAlign=top;spacingTop=2;" parent="1" vertex="1">
+          <mxGeometry x="660" y="370" width="140" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="cmd_proc" value="&lt;b&gt;Command Processor&lt;/b&gt;&lt;hr&gt;&lt;font style=&quot;font-size:10px&quot;&gt;&lt;b&gt;c&lt;/b&gt; — Configure ports&lt;br&gt;&lt;b&gt;1/2&lt;/b&gt; — Inject data&lt;br&gt;&lt;b&gt;m&lt;/b&gt; — Switch mode&lt;br&gt;&lt;b&gt;h&lt;/b&gt; — Help&lt;br&gt;&lt;b&gt;reset&lt;/b&gt; — Soft reset&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;verticalAlign=top;spacingTop=2;" parent="1" vertex="1">
+          <mxGeometry x="660" y="500" width="140" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="usb_to_cmd" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;strokeColor=#9673a6;" parent="1" source="usb_console" target="cmd_proc" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mode_switch" value="&lt;b&gt;Mode Switch&lt;/b&gt;&lt;br&gt;(MODE_PIN 2)&lt;hr&gt;&lt;font style=&quot;font-size:10px&quot;&gt;LOW = Realtime&lt;br&gt;HIGH = Inject&lt;/font&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="880" y="370" width="150" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="cmd_to_mode" value="m (mode)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;strokeColor=#b85450;fontSize=10;fontStyle=2;" parent="1" source="cmd_proc" target="mode_switch" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="relay" value="&lt;b&gt;Relay Logic&lt;/b&gt;&lt;hr&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Bidirectional forwarding&lt;br&gt;256-byte buffers&lt;br&gt;Console output with&lt;br&gt;device prefix (1:/2:)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;verticalAlign=top;spacingTop=2;" parent="1" vertex="1">
+          <mxGeometry x="420" y="480" width="160" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="cmd_to_relay" value="1/2 (inject)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;strokeColor=#82b366;fontSize=10;fontStyle=2;" parent="1" source="cmd_proc" target="relay" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="relay_to_usb" value="sniffed data" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;strokeColor=#666666;fontSize=10;fontStyle=2;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="relay" target="usb_console" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="500" y="420" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uart1" value="&lt;b&gt;UART1&lt;/b&gt;&lt;br&gt;(Serial1)&lt;br&gt;TX1 / RX1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="390" y="370" width="100" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="uart2" value="&lt;b&gt;UART2&lt;/b&gt;&lt;br&gt;(Serial2)&lt;br&gt;TX2 / RX2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="390" y="630" width="100" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="uart1_relay" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;strokeColor=#82b366;startArrow=classic;endArrow=classic;" parent="1" source="uart1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="440" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uart2_relay" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeWidth=2;strokeColor=#82b366;startArrow=classic;endArrow=classic;" parent="1" source="uart2" target="relay" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="440" y="630" />
+              <mxPoint x="480" y="630" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dev1" value="&lt;b&gt;Device 1&lt;/b&gt;&lt;br&gt;(Serial Endpoint)" style="shape=mxgraph.cisco.computers_and_peripherals.micro_webserver;sketch=0;html=1;whiteSpace=wrap;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalLabelPosition=bottom;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="110" y="370" width="80" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="dev2" value="&lt;b&gt;Device 2&lt;/b&gt;&lt;br&gt;(Serial Endpoint)" style="shape=mxgraph.cisco.computers_and_peripherals.micro_webserver;sketch=0;html=1;whiteSpace=wrap;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalLabelPosition=bottom;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="110" y="630" width="80" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="dev1_uart1" value="RS-232 / TTL" style="rounded=1;strokeWidth=3;strokeColor=#6c8ebf;startArrow=classic;endArrow=classic;fontSize=10;fontStyle=1;" parent="1" source="dev1" target="uart1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dev2_uart2" value="RS-232 / TTL" style="rounded=1;strokeWidth=3;strokeColor=#6c8ebf;startArrow=classic;endArrow=classic;fontSize=10;fontStyle=1;" parent="1" source="dev2" target="uart2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#999999;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="1050" y="330" width="220" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_title" value="&lt;b&gt;Operating Modes&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=12;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="1060" y="335" width="200" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_rt" value="&lt;b&gt;Realtime&lt;/b&gt; (default)&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Devices connected directly.&lt;br&gt;Arduino observes only.&lt;br&gt;Minimal latency added.&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=11;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="1070" y="365" width="190" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="legend_inj" value="&lt;b&gt;Inject&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;Arduino relays all traffic.&lt;br&gt;Enables data injection&lt;br&gt;to either device.&lt;br&gt;Adds relay latency.&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=11;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="1070" y="440" width="190" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="config_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#999999;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="1050" y="550" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="config_title" value="&lt;b&gt;Configurable Parameters&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=12;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="1060" y="555" width="200" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="config_detail" value="&lt;font style=&quot;font-size:10px&quot;&gt;Baud: 1 – 2,000,000&lt;br&gt;Data bits: 5 / 6 / 7 / 8&lt;br&gt;Parity: None / Even / Odd&lt;br&gt;Stop bits: 1 / 2&lt;br&gt;Default: 9600 8N1&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=11;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="1070" y="585" width="190" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
